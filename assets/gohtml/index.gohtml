@@ -1,0 +1,41 @@
+{{ define "index" }}
+{{ template "top" }}
+{{ template "topNavbar" . }}
+{{ template "settingsModal" . }}
+  <div class="container-fluid">
+    <div class="row">
+      <main class="col-md-9 ml-sm-auto col-lg-10 px-4 pt-4" role="main">
+        <div class="accordion" id="accordionFeed">
+        {{ range $i, $e := .Items }}
+          <div class="card">
+            <div class="card-header" id="heading{{$i}}">
+              <h5 class="mb-0">
+                <button class="btn lime-btn-link" type="button" data-toggle="collapse" data-target="#collapse{{$i}}" aria-expanded="true" aria-controls="collapse{{$i}}">
+                  {{ $e.Title }}
+                </button>
+              </h5>
+            </div>
+            <div id="collapse{{$i}}" class="collapse" aria-labelledby="heading{{$i}}" data-parent="#accordionFeed">
+              <div class="card-body embed-responsive embed-tall">
+                {{ if $e.AuthorName }}
+                <h6 class="card-subtitle mb-2 text-muted text-centered">{{ $e.AuthorName }}</h6>
+                {{ else if $e.AuthorEmail }}
+                <h6 class="card-subtitle mb-2 text-muted text-centered">{{ $e.AuthorEmail }}</h6>
+                {{ end }}
+                <h6 class="card-subtitle text-muted">{{ $e.Published }}</h6>
+                <a class="card-link" href="{{$e.Link}}">{{ $e.Link }}</a>
+                {{ if $e.Content }}
+                <iframe class="embed-responsive-item" srcdoc="{{ $e.Content }}" height=""></iframe>
+                {{ else }}
+                <iframe class="embed-responsive-item" srcdoc="{{ $e.Description }}"></iframe>
+                {{ end }}
+              </div>
+            </div>
+          </div>
+        {{ end }}
+      </div>
+    </main>
+  </div>
+</div>
+{{ template "bottom" }}
+{{ end }}

@@ -1,0 +1,5 @@
+# database files
+assets/feeds.db
+
+# astillectron vendor
+vendor/*

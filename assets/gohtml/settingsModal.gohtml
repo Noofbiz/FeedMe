@@ -1,0 +1,48 @@
+{{ define "settingsModal" }}
+<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tbody>
+            {{ range .FeedURLs }}
+              <tr>
+                <td>{{ . }}</td>
+                <td>
+                  <button type="button" class="btn btn-outline-danger btn-settings-delete">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+            {{ end }}
+            <tr>
+              <td>
+                <input class="form-control" type="text" placeholder="Add a feed">
+              </td>
+              <td>
+                <button type="button" class="btn btn-outline-success btn-settings-add">
+                  <i class="fas fa-plus-circle"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="form-group">
+          <input type="number" class="form-control" id="updatesEvery" placeholder="Update Every X Hours" step="1" min="0" max="100">
+          <input type="number" class="form-control" id="expiresAfter" placeholder="Entries Delete after X Days" step="1" min="0" max="365">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button id="btnSettingsSave" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

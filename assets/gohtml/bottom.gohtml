@@ -1,0 +1,14 @@
+{{ define "bottom" }}
+<!-- Insert this line above script imports  -->
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+<script src="static/js/jquery-3.3.1.min.js"></script>
+<script src="static/js/bootstrap.bundle.min.js"></script>
+<script src="static/js/validator.min.js"></script>
+<script src="static/js/settings.js"></script>
+
+<!-- Insert this line after script imports -->
+<script>if (window.module) module = window.module;</script>
+</body>
+</html>
+{{ end }}

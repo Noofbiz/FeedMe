@@ -1,0 +1,28 @@
+{{ define "topNavbar" }}
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <span class="navbar-brand">Feed Me!</span>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#settingsModal">
+    <i class="fas fa-wrench"></i>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Feeds
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/">all</a>
+          <div class="dropdown-divider"></div>
+          {{ range .FeedTitles }}
+            <a class="dropdown-item" href="/?show-feed={{ . }}">{{ . }}</a>
+          {{ end }}
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+{{ end }}
