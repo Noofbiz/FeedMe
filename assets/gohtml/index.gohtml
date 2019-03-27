@@ -23,7 +23,7 @@
                 <h6 class="card-subtitle mb-2 text-muted text-centered">{{ $e.AuthorEmail }}</h6>
                 {{ end }}
                 <h6 class="card-subtitle text-muted">{{ $e.Published }}</h6>
-                <a class="card-link" href="{{$e.Link}}">{{ $e.Link }}</a>
+                <a class="card-link open-in-browser" href="{{$e.Link}}">{{ $e.Link }}</a>
                 {{ if $e.Content }}
                 <iframe class="embed-responsive-item" srcdoc="{{ $e.Content }}" height=""></iframe>
                 {{ else }}

@@ -44,7 +44,5 @@ func main() {
 		log.Fatalf("Failed at window.Create(). Error: %v", err.Error())
 	}
 
-	w.OpenDevTools()
-
 	a.Wait()
 }

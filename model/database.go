@@ -21,6 +21,11 @@ import (
 // feed_items
 // | origin | title | author_name | author_email | published | content | description | link |
 
+var (
+	ResetUpdateTicker = make(chan struct{})
+	ResetRemoveTicker = make(chan struct{})
+)
+
 type feedDatabase struct {
 	db *sql.DB
 }
@@ -137,12 +142,23 @@ func (f *feedDatabase) UpdateFeeds() error {
 			return err
 		}
 		for _, i := range feed.Items {
-			t, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", fd.updated)
+			t1, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", fd.updated)
 			if err != nil {
 				return err
 			}
-			if i.PublishedParsed.After(t) {
-				if _, err = itemSTMT.Exec(fd.name, i.Title, i.Author.Name, i.Author.Email, i.PublishedParsed.String(), i.Content, i.Description, i.Link); err != nil {
+			t2 := time.Time{}
+			if i.PublishedParsed != nil {
+				t2 = *i.PublishedParsed
+			} else if i.UpdatedParsed != nil {
+				t2 = *i.UpdatedParsed
+			}
+			var author_name, author_email string
+			if i.Author != nil {
+				author_name = i.Author.Name
+				author_email = i.Author.Email
+			}
+			if t2.After(t1) {
+				if _, err = itemSTMT.Exec(fd.name, i.Title, author_name, author_email, t2.Format("2006-01-02 15:04:05.999999999 -0700 MST"), i.Content, i.Description, i.Link); err != nil {
 					return err
 				}
 			}
@@ -182,10 +198,69 @@ func (f *feedDatabase) RemoveFeed(url string) error {
 
 func (f *feedDatabase) SetUpdatesEvery(n int) error {
 	_, err := f.db.Exec("UPDATE settings SET updates_every=?", n)
+	ResetUpdateTicker <- struct{}{}
 	return err
+}
+
+func (f *feedDatabase) GetUpdatesEvery() (time.Duration, error) {
+	r, err := f.db.Query("SELECT updates_every FROM settings")
+	if err != nil {
+		return time.Duration(0), err
+	}
+	r.Next()
+	var t int
+	err = r.Scan(&t)
+	r.Close()
+	if err != nil {
+		return time.Duration(0), err
+	}
+	return time.Hour * time.Duration(t), nil
 }
 
 func (f *feedDatabase) SetRemoveAfter(n int) error {
 	_, err := f.db.Exec("UPDATE settings SET remove_after=?", n)
+	ResetRemoveTicker <- struct{}{}
 	return err
+}
+
+func (f *feedDatabase) GetRemoveAfter() (time.Duration, error) {
+	r, err := f.db.Query("SELECT remove_after FROM settings")
+	if err != nil {
+		return time.Duration(0), err
+	}
+	r.Next()
+	var t int
+	err = r.Scan(&t)
+	r.Close()
+	if err != nil {
+		return time.Duration(0), err
+	}
+	return time.Hour * 24 * time.Duration(t), nil
+}
+
+func (f *feedDatabase) PruneFeeds() error {
+	titles := make([]string, 0)
+	dur, err := f.GetRemoveAfter()
+	r, err := f.db.Query("SELECT title, published FROM feed_items")
+	if err != nil {
+		return err
+	}
+	for r.Next() {
+		var title string
+		var pub string
+		r.Scan(&title, &pub)
+		pubTime, _ := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST", pub)
+		if time.Now().Sub(pubTime).Nanoseconds() > dur.Nanoseconds() {
+			titles = append(titles, title)
+		}
+	}
+	r.Close()
+
+	for _, t := range titles {
+		_, err := f.db.Exec("DELETE FROM feed_items WHERE title=?", t)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

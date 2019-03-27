@@ -26,6 +26,8 @@ func StartServer() string {
 		log.Fatal(err)
 	}
 
+	autoReloader()
+
 	go http.Serve(l, nil)
 	return strconv.Itoa(l.Addr().(*net.TCPAddr).Port)
 }
