@@ -5,4 +5,8 @@ $(function(){
     event.preventDefault();
     shell.openExternal(event.target.href);
   });
+  $('.lime-btn-link').click((event) => {
+    $(event.target).addClass('disabled');
+    $.post("/read", $(event.target).text());
+  });
 });

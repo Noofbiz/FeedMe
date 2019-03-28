@@ -2,8 +2,8 @@ module github.com/Noofbiz/FeedMe
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.0 // indirect
+	github.com/asticode/go-astiamqp v1.0.0 // indirect
 	github.com/asticode/go-astilectron v0.8.0
-	github.com/asticode/go-astitools v1.0.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mattn/go-colorable v0.1.1 // indirect
 	github.com/mattn/go-isatty v0.0.7 // indirect

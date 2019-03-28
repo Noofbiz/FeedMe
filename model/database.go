@@ -19,7 +19,7 @@ import (
 // | updates_every | remove_after |
 // *****************************************************************************
 // feed_items
-// | origin | title | author_name | author_email | published | content | description | link |
+// | origin | title | author_name | author_email | published | content | description | link | read |
 
 var (
 	ResetUpdateTicker = make(chan struct{})
@@ -56,7 +56,7 @@ func (f *feedDatabase) Open() error {
       INSERT INTO settings(updates_every, remove_after) values(12, 30);
       `)
 		f.db.Exec(`
-      CREATE TABLE feed_items (origin TEXT, title TEXT, author_name TEXT, author_email TEXT, published TEXT, content TEXT, description TEXT, link TEXT);
+      CREATE TABLE feed_items (origin TEXT, title TEXT, author_name TEXT, author_email TEXT, published TEXT, content TEXT, description TEXT, link TEXT, read INTEGER);
       DELETE FROM feed_items;
       `)
 	}
@@ -128,7 +128,7 @@ func (f *feedDatabase) UpdateFeeds() error {
 	if err != nil {
 		return err
 	}
-	itemSTMT, err := feedTx.Prepare("INSERT INTO feed_items(origin, title, author_name, author_email, published, content, description, link) values(?, ?, ?, ?, ?, ?, ?, ?)")
+	itemSTMT, err := feedTx.Prepare("INSERT INTO feed_items(origin, title, author_name, author_email, published, content, description, link, read) values(?, ?, ?, ?, ?, ?, ?, ?, 0)")
 	if err != nil {
 		return err
 	}

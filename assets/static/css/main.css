@@ -20,13 +20,14 @@
 
 .lime-btn-link:disabled, .lime-btn-link.disabled {
   color: #868e96;
-  pointer-events: none;
 }
 
 .embed-tall {
-  height: 75vh;
+  height: 100vh;
 }
 
 .embed-tall iframe {
   margin-top: 10vh;
+  padding-bottom: 10vh;
+  background-color: white;
 }

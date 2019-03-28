@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/Noofbiz/FeedMe/model"
 )
@@ -18,6 +19,7 @@ var tmpl = template.Must(template.ParseGlob("assets/gohtml/*"))
 func StartServer() string {
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/save", saveSettingsHandler)
+	http.HandleFunc("/read", readHandler)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./assets/static/"))))
 
@@ -37,7 +39,6 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 	feedData, err := model.TheFeedData.GetFeedData(r.FormValue("show-feed"), "")
 	if err != nil {
 		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	sort.Sort(sortByPubDate(feedData.Items))
@@ -45,7 +46,6 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 	err = tmpl.ExecuteTemplate(w, "index", feedData)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -102,4 +102,14 @@ func saveSettingsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func readHandler(w http.ResponseWriter, r *http.Request) {
+	d, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	model.TheFeedData.MarkAsRead(strings.TrimSpace(string(d)))
 }
