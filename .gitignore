@@ -3,3 +3,9 @@ assets/feeds.db
 
 # astillectron vendor
 vendor/*
+
+# Oauth2 token
+assets/token.json
+
+# Database update info
+assets/uploadinfo.json

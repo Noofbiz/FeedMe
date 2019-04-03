@@ -13,14 +13,17 @@ import (
 func main() {
 	model.TheFeedData.Open()
 	defer model.TheFeedData.Close()
+
 	port := server.StartServer()
 
 	p, _ := os.Getwd()
 	var a *astilectron.Astilectron
 	var err error
 	if a, err = astilectron.New(astilectron.Options{
-		AppName:           "Feed Me!",
-		BaseDirectoryPath: p,
+		AppName:            "Feed Me!",
+		BaseDirectoryPath:  p,
+		AppIconDefaultPath: "assets/icon.png",
+		AppIconDarwinPath:  "assets/icon.icns",
 	}); err != nil {
 		log.Fatalf("Failed to create new astillectron. Error: %v", err.Error())
 	}
