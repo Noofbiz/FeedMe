@@ -32,22 +32,28 @@ func (f *feedDatabase) GetFeedData(origin, search string) (fd FeedData, err erro
 	allFeedsRows.Close()
 
 	var feedItems *sql.Rows
-	if search == "" && origin == "" {
+	switch {
+	case search == "unreads":
+		feedItems, err = f.db.Query("SELECT title, author_name, author_email, published, content, description, link, read FROM feed_items WHERE read=0")
+		if err != nil {
+			return fd, err
+		}
+	case search == "" && origin == "":
 		feedItems, err = f.db.Query("SELECT title, author_name, author_email, published, content, description, link, read FROM feed_items")
 		if err != nil {
 			return fd, err
 		}
-	} else if search == "" {
+	case search == "":
 		feedItems, err = f.db.Query("SELECT title, author_name, author_email, published, content, description, link, read FROM feed_items WHERE origin=?", origin)
 		if err != nil {
 			return fd, err
 		}
-	} else if origin == "" {
+	case origin == "":
 		feedItems, err = f.db.Query("SELECT title, author_name, author_email, published, content, description, link, read FROM feed_items WHERE feed_items MATCH ?", search)
 		if err != nil {
 			return fd, err
 		}
-	} else {
+	default:
 		feedItems, err = f.db.Query("SELECT title, author_name, author_email, published, content, description, link, read FROM feed_items WHERE origin=? AND feed_items MATCH ?", origin, search)
 		if err != nil {
 			return fd, err

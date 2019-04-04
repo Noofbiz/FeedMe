@@ -36,7 +36,7 @@ func StartServer() string {
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	feedData, err := model.TheFeedData.GetFeedData(r.FormValue("show-feed"), "")
+	feedData, err := model.TheFeedData.GetFeedData(r.FormValue("show-feed"), r.FormValue("search"))
 	if err != nil {
 		log.Println(err)
 		return
