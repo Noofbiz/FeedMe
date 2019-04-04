@@ -4,7 +4,14 @@ import (
 	"time"
 
 	"github.com/Noofbiz/FeedMe/model"
+	"github.com/asticode/go-astilectron"
 )
+
+var window *astilectron.Window
+
+func SetWindow(w *astilectron.Window) {
+	window = w
+}
 
 func autoReloader() {
 	model.TheFeedData.UpdateFeeds()
@@ -18,8 +25,14 @@ func autoReloader() {
 			select {
 			case <-updateTicker.C:
 				model.TheFeedData.UpdateFeeds()
+				if window != nil {
+					window.SendMessage("refresh")
+				}
 			case <-removeTicker.C:
 				model.TheFeedData.PruneFeeds()
+				if window != nil {
+					window.SendMessage("refresh")
+				}
 			case <-model.ResetUpdateTicker:
 				u, _ := model.TheFeedData.GetUpdatesEvery()
 				updateTicker.Stop()

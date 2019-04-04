@@ -47,5 +47,7 @@ func main() {
 		log.Fatalf("Failed at window.Create(). Error: %v", err.Error())
 	}
 
+	server.SetWindow(w)
+
 	a.Wait()
 }

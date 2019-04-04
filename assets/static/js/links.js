@@ -10,3 +10,12 @@ $(function(){
     $.post("/read", $(event.target).text());
   });
 });
+
+document.addEventListener('astilectron-ready', function() {
+  astilectron.onMessage(function(message) {
+    if (message === "refresh") {
+      window.location.reload(true); 
+      return;
+    }
+  });
+})
